@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    public AudioSource AudioSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,9 @@ public class CharacterMovement : MonoBehaviour
         if (Input.GetKey("space"))
         {
             GetComponent<Rigidbody2D>().velocity = new Vector3(0, 10, 0);
+            AudioSource.Play();
+
+            
         }
 
         if (Input.GetKey("d") || Input.GetKey("w"))
