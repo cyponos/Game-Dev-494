@@ -4,33 +4,30 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    private Rigidbody2D rb;
+    
     public AudioSource AudioSource;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        Debug.Log("Hello, world!");
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Input.GetKey("space"))
+        float directionX = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(directionX * 7f, rb.velocity.y);
+     
+        if (Input.GetButtonDown("Jump"))
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(0, 10, 0);
+            rb.velocity = new Vector2(rb.velocity.x, 10);
             AudioSource.Play();
 
             
         }
 
-        if (Input.GetKey("d") || Input.GetKey("w"))
-        {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(2, 0, 0);
-        }
-
-        if (Input.GetKey("a") || Input.GetKey("s"))
-        {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(-2, 0, 0);
-        }
+      
 
     }
 }
