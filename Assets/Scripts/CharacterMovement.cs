@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
@@ -8,38 +6,44 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private float speed;
     private Animator anim;
-    private Boolean grounded;
-    
+    private bool grounded;
+    private int jumpsRemaining = 2;
     public AudioSource AudioSource;
-    // Start is called before the first frame update
+
+    // Speed boost variables
+    [SerializeField] private float speedBoostAmount = 5.0f;
+    [SerializeField] private float speedBoostDuration = 5.0f;
+    private bool isSpeedBoosted = false;
+
     private void Start()
     {
-        //grab references for rigidbody and animator
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     private void Update()
     {
         speed = 10;
         float directionX = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(directionX * speed, rb.velocity.y);
+        rb.velocity = new Vector2(directionX * (isSpeedBoosted ? speed + speedBoostAmount : speed), rb.velocity.y);
 
         if (directionX > 0.01f)
-        {
             transform.localScale = Vector3.one;
-        }
-
         else if (directionX < -0.01f)
+            transform.localScale = new Vector3(-1, 1, 1);
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.localScale = new Vector3(-1,1,1);
-        }
-     
-        if (Input.GetButtonDown("Jump") && grounded)
-        {
-            Jump();
-            
+            if (grounded && jumpsRemaining > 0)
+            {
+                Jump();
+                jumpsRemaining--;
+            }
+            else if (!grounded && jumpsRemaining == 1)
+            {
+                Jump();
+                jumpsRemaining--;
+            }
         }
 
         anim.SetBool("run", directionX != 0);
@@ -54,12 +58,31 @@ public class CharacterMovement : MonoBehaviour
         grounded = false;
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("SpeedBoost"))
+        {
+            StartCoroutine(ActivateSpeedBoost());
+            Destroy(other.gameObject); // Destroy the speed boost power-up object
+        }
+    }
+
+    private IEnumerator ActivateSpeedBoost()
+    {
+        if (!isSpeedBoosted)
+        {
+            isSpeedBoosted = true;
+            yield return new WaitForSeconds(speedBoostDuration);
+            isSpeedBoosted = false;
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.CompareTag("Ground"))
         {
             grounded = true;
+            jumpsRemaining = 2;
         }
-
     }
 }
