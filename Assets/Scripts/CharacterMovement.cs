@@ -102,10 +102,9 @@ public class CharacterMovement : MonoBehaviour
         
     
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public bool canAttack()
     {
-
-
+        return directionX == 0 && IsGrounded() && !OnWall();
     }
     private bool OnWall()
     {
