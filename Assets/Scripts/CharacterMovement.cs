@@ -52,7 +52,7 @@ public class CharacterMovement : MonoBehaviour
         //wall jump logic
         if (wallJumpCooldown > 0.2f)
         {
-            
+
             rb.velocity = new Vector2(directionX * speed, rb.velocity.y);
 
             if (OnWall() && !IsGrounded())
@@ -99,8 +99,8 @@ public class CharacterMovement : MonoBehaviour
             wallJumpCooldown = 0;
         }
     }
-        
-    
+
+
 
     public bool canAttack()
     {
